@@ -1,0 +1,25 @@
+#pragma once
+
+//////////////////////////////////////////////////////////////////////////
+// ZeroMQ includes and definitions.
+//
+
+#include "zmq.hpp"
+#include "zmq_utils.h"
+
+//////////////////////////////////////////////////////////////////////////
+// STL includes and definitions.
+//
+
+#include <iostream>
+#include <tchar.h>
+#include <string.h>
+#include <fstream>
+
+//////////////////////////////////////////////////////////////////////////
+// Boost includes and definitions.
+//
+
+#include "boost/filesystem.hpp"
+#include "boost/thread.hpp"
+#include "boost/bind.hpp"
