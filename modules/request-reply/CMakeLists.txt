@@ -1,0 +1,6 @@
+set(PROPERTY_FOLDER "request-reply")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/curve)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/rep-server)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/req-client)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dealer-client)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/router-server)

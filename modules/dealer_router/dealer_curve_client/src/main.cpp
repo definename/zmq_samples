@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ZmqMonitor.h"
+#include "ZMQMonitor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Represents ZMQ_REQ-ZMQ_REP pattern.
@@ -40,11 +40,11 @@ int _tmain(int argc, TCHAR* argv[])
 		std::string id("e342fcfd-064f-4ec4-8e56-3de3f6418995");
 		socket.setsockopt(ZMQ_IDENTITY, id.data(), id.size());
 
-		ZmqMonitor monitor;
+		ZMQMonitor monitor;
 		boost::shared_future<void> f;
 		f = boost::async(boost::launch::async,
 			boost::bind(
-			static_cast<void (ZmqMonitor::*) (zmq::socket_t &socket, const char *addr_, int events)> (&ZmqMonitor::monitor),
+			static_cast<void (ZMQMonitor::*) (zmq::socket_t &socket, const char *addr_, int events)> (&ZMQMonitor::monitor),
 			&monitor,
 			boost::ref(socket),
 			"inproc://c_monitor.rep",
@@ -62,7 +62,7 @@ int _tmain(int argc, TCHAR* argv[])
 			// Send request.
 			std::string str("HELLO");
 			zmq::message_t request (str.size());
-			memcpy ((void*)request.data(), str.c_str(), str.size());
+			memcpy(reinterpret_cast<void*>(request.data()), str.c_str(), str.size());
 
 			socket.send(request);
 

@@ -1,0 +1,270 @@
+package quicktech.broker;
+
+message Service {
+	optional string id = 1 [default = "6b89bf11-ba05-4700-abd0-b44a1f304ebd"];
+}
+
+message Protocol
+{
+	enum Type
+	{
+		NetScan = 1;
+		RemoteInstaller = 2;
+		AgentLogin = 3;
+		UninstallDevice = 4;
+		RemoteConnection = 5;
+		NetworkDeviceDescription = 6;
+		TestCredentials = 7;
+		Ticket = 8;
+		NewUser = 9;
+		Script = 10;
+		Activity = 11;
+		Heartbeat = 12;
+		UserRequest = 13;
+	}
+
+	optional Type type = 1;
+	optional bytes msg = 2;
+}
+
+message NetScan
+{
+	enum Status
+	{
+		Scanning = 1;
+		Finished = 2;
+		Disabled = 3;
+	}	
+	
+	optional Status status = 1; 
+	optional string companyId = 2;
+	optional string agentId = 3;
+	
+	message Device
+	{
+		optional string id = 1;
+		optional string deviceId = 2;
+		optional string ipAddress = 3;
+		optional string macAddress = 4;
+		optional string description = 5;
+		optional string createdAt = 6;
+		optional string updatedAt = 7;
+		optional string hostName = 8;
+		optional string agentStatus = 9;
+		optional string message = 10;
+		optional string manufacturer = 11;
+	}
+	
+	repeated Device device = 4;
+}
+
+message RemoteInstaller
+{
+	enum Status
+	{
+		Error = 1;
+		LoginError = 2;
+		Init = 3;
+		InProgress = 4;		
+		Installed = 5;
+		Managed = 6;
+		Unknown = 7;
+	}
+	
+	optional Status status = 1;
+	optional string content = 2;
+	optional string companyId = 3;
+    optional string deviceId = 4;
+	optional string netScanId = 5;
+	optional TestCredentials test = 6;
+}
+
+message DeviceGroup
+{
+	optional string group_id = 1;
+	optional string group_name = 2;
+	optional string group_description = 3;
+}
+
+message AgentLogin
+{
+	enum Status
+	{
+		Online = 1;
+		Offline = 2;
+		Installed = 3;
+	}
+	
+	optional Status status = 1; 
+	optional string companyId = 2;
+	optional string deviceId = 3;
+	optional string netScanId = 4;
+	optional string userName = 5;
+	optional string version = 6;
+	optional string hostname = 7;
+	optional string oneTimeId = 8;
+	optional string offlineAt = 9;
+	optional DeviceGroup group = 10;
+}
+
+message UninstallDevice
+{
+	enum Status
+	{
+		Uninstalled = 1;
+		Deleted = 2;
+	}
+
+	optional string companyId = 1;
+	optional string deviceId = 2;
+	optional string netScanId = 3;
+	optional Status status = 4;
+}
+
+message RemoteConnection
+{
+	enum Status
+	{
+		Online = 1;
+		Offline = 2;
+	}
+	
+	enum ConnectionType
+	{
+		Direct = 0;
+		Proxy = 1;
+		RDP = 2;
+		Unknown = 3;
+	}
+	
+	optional Status status = 1; 
+	optional string userId = 2;
+	optional string userName = 3;
+	optional string connectionsCount = 4;
+	optional string deviceId = 5;
+	optional string companyId = 6;
+	optional string sessionDuration = 7;
+	optional string sessionId = 8;
+	optional ConnectionType connectionType = 9;
+	optional string internalIp = 10;
+	optional string externalIp = 11;
+}
+
+message NetworkDeviceDescription
+{
+	optional string companyId = 1;
+	optional string networkDeviceId = 2;
+	optional string netwokDeviceDescription = 3;
+}
+
+message TestCredentials
+{
+	enum TestResult
+	{
+		succeed = 1;
+		fail = 2;
+	}
+	
+	optional TestResult testResult = 1;
+	optional string agentId = 2;
+	optional string testId = 3;
+	optional string companyId = 4;
+	optional string deviceId = 5;
+}
+
+message Ticket
+{
+	enum Priority
+	{
+		Low = 1;
+		Medium = 2;
+		High = 3;
+	}
+
+	message Attachment
+	{
+		optional string name = 1;
+		optional uint64 size = 2;
+		optional bytes content = 3;
+	}	
+	
+	optional string agentId = 1;
+	optional string companyId = 2;
+	optional string subject = 3;
+	optional string body = 4;
+	optional string userId = 5;
+	optional string userName = 6;
+	optional string hostName = 7;
+	optional string assignedTo = 8;
+	optional Priority priority = 9;
+	repeated Attachment attachment = 10;
+	required string ticketToken = 11;
+}
+
+message NewUser
+{
+	optional string agentId = 1;
+	optional string companyId = 2;
+	optional string firstName = 3;
+	optional string lastName = 4;
+	optional string email = 5;
+	optional string token = 6;
+}
+
+message Script
+{
+	enum CmdType
+	{
+		Cmd = 1;
+	}
+	
+	message Error
+	{
+		optional string message = 1;
+	}
+	
+	optional string agentId = 1;
+	optional bytes output = 2;
+	required string sessionId = 3;
+	required CmdType type = 4;
+	optional Error error = 5;
+}
+
+message Activity
+{
+	enum CmdType
+	{
+		Idle = 1;
+		NoRestart = 2;
+		Online = 3;
+	}
+
+	message Error
+	{
+		required string message = 1;
+	}
+
+	message Content
+	{
+		required CmdType type = 1;
+		optional string content = 2;
+		optional Error error = 3;
+	}
+	
+	repeated Content content = 1;
+	required string agentId = 2;
+}
+
+message Heartbeat
+{
+	optional bool ping = 1 [default = false];
+	optional bool pong = 2 [default = false];
+	required int32 sequenceNo = 3;
+	optional int64 timestamp = 4;
+}
+
+message UserRequest
+{
+	optional string token = 1;
+	optional string companyId = 2;
+}

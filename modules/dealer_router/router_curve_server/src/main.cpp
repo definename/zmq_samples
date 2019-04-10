@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ZmqMonitor.h"
+#include "ZMQMonitor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Represents ZMQ_REQ-ZMQ_REP pattern.
@@ -44,11 +44,11 @@ int _tmain(int argc, TCHAR* argv[])
 		std::string idOwn("1b7f3602-0a63-4c73-9dde-7875b0f91bfd");
 		socket.setsockopt(ZMQ_IDENTITY, idOwn.data(), idOwn.size());
 
-		ZmqMonitor monitor;
+		ZMQMonitor monitor;
 		boost::shared_future<void> f;
 		f = boost::async(boost::launch::async,
 			boost::bind(
-			static_cast<void (ZmqMonitor::*) (zmq::socket_t&, const char*, int)> (&ZmqMonitor::monitor),
+			static_cast<void (ZMQMonitor::*) (zmq::socket_t&, const char*, int)> (&ZMQMonitor::monitor),
 			&monitor,
 			boost::ref(socket),
 			"inproc://s_monitor.rep",
@@ -64,7 +64,7 @@ int _tmain(int argc, TCHAR* argv[])
 		while (true)
 		{
 			int more = 0;
-			std::size_t size;
+			std::size_t size = sizeof(more);
 			do
 			{
 				zmq::message_t request;
@@ -72,9 +72,10 @@ int _tmain(int argc, TCHAR* argv[])
 				{
 					std::string m;
 					m.resize(request.size());
-					socket.getsockopt(ZMQ_RCVMORE, &more, &size);
 					memcpy(&m[0], request.data(), m.size());
 					std::cout << m << std::endl;
+
+					socket.getsockopt(ZMQ_RCVMORE, &more, &size);
 				}
 			}
 			while (more);
@@ -85,12 +86,12 @@ int _tmain(int argc, TCHAR* argv[])
 			//! Id must be same on client side (set it with ZMQ_IDENTITY)
 			std::string id("e342fcfd-064f-4ec4-8e56-3de3f6418995");
 			zmq::message_t idMessage(id.size());
-			memcpy((void*)idMessage.data(), id.c_str(), id.size());
+			memcpy(reinterpret_cast<void*>(idMessage.data()), id.c_str(), id.size());
 			socket.send(idMessage, ZMQ_SNDMORE);
 
 			std::string str("WELCOME");
 			zmq::message_t reply(str.size());
-			memcpy((void*)reply.data(), str.c_str(), str.size());
+			memcpy(reinterpret_cast<void*>(reply.data()), str.c_str(), str.size());
 			socket.send(reply);
 		}
 

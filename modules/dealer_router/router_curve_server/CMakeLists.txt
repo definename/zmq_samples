@@ -1,52 +1,50 @@
-cmake_minimum_required(VERSION 3.2.1)
-
 project(router_curve_server)
 
 include(PCHSupport)
 include(CRTLinkage)
 
-# Source files
-set(PROJECT_SRC
+set(PROJECT_SOURCES
 	src/main.cpp
-	src/ZmqMonitor.cpp
+	src/ZMQMonitor.cpp
 	)
 set(PROJECT_HEADERS
-	include/ZmqMonitor.h
+	include/ZMQMonitor.h
 	)
-
 set(MISC
 	src/pch.h
 	src/pch.cpp
 	)
 
-add_definitions(
-	-DWIN32_LEAN_AND_MEAN
-	-D_CRT_SECURE_NO_WARNINGS
-	-DUNICODE
-	-D_UNICODE
-	)
+source_group("Source Files" FILES ${PROJECT_SOURCES})
+source_group("Header Files" FILES ${PROJECT_HEADERS})
+source_group("" FILES ${MISC})
 
 add_executable(${PROJECT_NAME}
-	${PROJECT_SRC}
+	${PROJECT_SOURCES}
 	${PROJECT_HEADERS}
 	${MISC}
 	)
 
+add_definitions(
+	-DUNICODE
+	-D_UNICODE
+	)
+
 add_precompiled_headers(${PROJECT_NAME} "src/")
 
-# Sets dependencies
-include_directories(include
+include_directories(
+	include
 	${ZeroMQ_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
 	)
 target_link_libraries(${PROJECT_NAME}
 	${ZeroMQ_LIBRARIES}
+	${Boost_LIBRARIES}
 	)
-
 add_dependencies(${PROJECT_NAME}
 	ZeroMQ
 	)
 
-# Copies zmq.dll to bin directory
 add_custom_command(
 	TARGET ${PROJECT_NAME}
 	POST_BUILD
